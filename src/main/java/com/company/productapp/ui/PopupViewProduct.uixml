@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<?xdevuiml version="1.0"?>
+<?template BROWSER_XGA?>
+<?import com.vaadin.flow.component.button.Button?>
+<?import com.vaadin.flow.component.formlayout.FormLayout?>
+<?import com.vaadin.flow.component.formlayout.FormLayout.FormItem?>
+<?import com.vaadin.flow.component.html.Label?>
+<?import com.vaadin.flow.component.orderedlayout.HorizontalLayout?>
+<?import com.vaadin.flow.component.orderedlayout.VerticalLayout?>
+<?import com.vaadin.flow.component.textfield.IntegerField?>
+<?import com.vaadin.flow.component.textfield.NumberField?>
+<?import com.vaadin.flow.component.textfield.TextField?>
+<VerticalLayout xmlns:x="http://xml.xdev-software.com/xdevuiml" x:name="PopupViewProduct">
+    <x:constraints width="100%" zpos="0" height="100%" />
+    <FormLayout x:name="formLayout">
+        <x:responsiveSteps>
+            <entry minWidth="0px" columns="1" labelsPosition="TOP" />
+            <entry minWidth="500px" columns="2" labelsPosition="TOP" />
+            <entry minWidth="1000px" columns="3" labelsPosition="ASIDE" />
+        </x:responsiveSteps>
+        <x:constraints width="-1px" height="-1px" flex-grow="0.0" />
+        <FormItem x:name="formItem">
+            <x:constraints width="0px" height="0px" />
+            <Label x:name="labelImageUrl" text="ImageURL">
+                <x:constraints width="0px" label="true" height="0px" />
+            </Label>
+            <TextField x:name="textFieldImage">
+                <x:constraints width="-1px" height="0px" />
+            </TextField>
+        </FormItem>
+        <FormItem x:name="formItem2">
+            <x:constraints width="0px" height="0px" />
+            <Label x:name="labelName" text="Name">
+                <x:constraints width="0px" label="true" height="0px" />
+            </Label>
+            <TextField x:name="textFieldName">
+                <x:constraints width="-1px" height="0px" />
+            </TextField>
+        </FormItem>
+        <FormItem x:name="formItem3">
+            <x:constraints width="0px" height="0px" />
+            <Label x:name="labelDesc" text="Description">
+                <x:constraints width="0px" label="true" height="0px" />
+            </Label>
+            <TextField x:name="textFieldDesc">
+                <x:constraints width="-1px" height="0px" />
+            </TextField>
+        </FormItem>
+        <FormItem x:name="formItem4">
+            <x:constraints width="0px" height="0px" />
+            <Label x:name="labelCategory" text="Category">
+                <x:constraints width="0px" label="true" height="0px" />
+            </Label>
+            <TextField x:name="textFieldCategory">
+                <x:constraints width="-1px" height="0px" />
+            </TextField>
+        </FormItem>
+        <FormItem x:name="formItem5">
+            <x:constraints width="0px" height="0px" />
+            <Label x:name="labelPrice" text="Unit Price">
+                <x:constraints width="0px" label="true" height="0px" />
+            </Label>
+            <NumberField x:name="numberFieldPrice">
+                <x:constraints width="0px" alignment="AUTO" height="0px" flex-grow="0.0" />
+            </NumberField>
+        </FormItem>
+        <FormItem x:name="formItem6">
+            <x:constraints width="0px" height="0px" />
+            <Label x:name="labelWeight" text="Unit Weight">
+                <x:constraints width="0px" label="true" height="0px" />
+            </Label>
+            <NumberField x:name="numberFieldWeight">
+                <x:constraints width="0px" alignment="AUTO" height="0px" flex-grow="0.0" />
+            </NumberField>
+        </FormItem>
+        <FormItem x:name="formItem7">
+            <x:constraints width="0px" height="0px" />
+            <Label x:name="labelStock" text="Units in stock">
+                <x:constraints width="0px" label="true" height="0px" />
+            </Label>
+            <IntegerField x:name="integerFieldStock">
+                <x:constraints width="0px" alignment="AUTO" height="0px" flex-grow="0.0" />
+            </IntegerField>
+        </FormItem>
+    </FormLayout>
+    <HorizontalLayout x:name="horizontalLayout">
+        <x:constraints width="-1px" height="-1px" flex-grow="0.0" />
+        <Button x:name="buttonSave" text="Save">
+            <x:constraints width="0px" height="0px" flex-grow="0.0" />
+        </Button>
+        <Button x:name="buttonCancel" text="Cancel">
+            <x:constraints width="0px" height="0px" flex-grow="0.0" />
+        </Button>
+    </HorizontalLayout>
+</VerticalLayout>

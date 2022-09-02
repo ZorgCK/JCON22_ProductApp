@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<?xdevuiml version="1.0"?>
+<?template BROWSER_WUXGA?>
+<?import com.company.productapp.domain.Product?>
+<?import com.rapidclipse.framework.server.ui.filter.FilterComponent?>
+<?import com.vaadin.flow.component.button.Button?>
+<?import com.vaadin.flow.component.grid.Grid?>
+<?import com.vaadin.flow.component.html.Div?>
+<?import com.vaadin.flow.component.orderedlayout.HorizontalLayout?>
+<?import com.vaadin.flow.component.orderedlayout.VerticalLayout?>
+<VerticalLayout xmlns:x="http://xml.xdev-software.com/xdevuiml" x:name="ViewMain" x:route="">
+    <x:constraints zpos="0" width="100%" height="100%" />
+    <Div x:name="divHeader">
+        <x:constraints width="-1px" height="-1px" flex-grow="0.0" />
+        <HorizontalLayout x:name="horizontalLayout">
+            <x:constraints width="-1px" alignment="AUTO" height="-1px" flex-grow="0.0" />
+            <FilterComponent x:searchableProperties="category,description,name,uuid" x:name="filterComponent" x:filterableProperties="category,description,name,unitPrice,unitWeight,unitsInStock,uuid" x:grid="grid" x:persist="true">
+                <x:constraints width="-1px" height="-1px" flex-grow="1.0" />
+            </FilterComponent>
+            <Button x:name="buttonAdd" text="Add new Product">
+                <x:constraints width="-1px" height="-1px" flex-grow="0.0" />
+            </Button>
+        </HorizontalLayout>
+    </Div>
+    <Div x:name="divBody">
+        <x:constraints width="100%" height="100%" flex-grow="0.0" />
+        <Grid x:name="grid" x:persist="true">
+            <x:typeArguments>
+                <typeArgument type="Product" />
+            </x:typeArguments>
+            <x:constraints width="100%" height="100%" />
+            <x:columns>
+                <column property="imageUrl" sortable="true" />
+                <column property="uuid" sortable="true" />
+                <column property="name" sortable="true" />
+                <column property="description" sortable="true" />
+                <column property="category.name" sortable="true" />
+                <column property="unitPrice" sortable="true" />
+                <column property="unitWeight" sortable="true" />
+                <column property="unitsInStock" sortable="true" />
+            </x:columns>
+        </Grid>
+    </Div>
+</VerticalLayout>
