@@ -2,27 +2,36 @@
 package com.company.productapp.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 
 public class Product implements Serializable
 {
-
 	private String          uuid;
-	private String          name, description, imageUrl; // Image loaded via URL TODO: Maybe saved localy?
+	private String          name, description;
 	private ProductCategory category;
-	private double          unitPrice, unitWeight;
+	private BigDecimal      unitPrice;
+	private double          unitWeight;
 	private int             unitsInStock;
+
+	private String imageName;
+	
+	private byte[] imageBytes;
+
+	public Product()
+	{
+
+	}
 
 	public Product(
 		final String name,
 		final String desc,
 		final ProductCategory category,
-		final double price,
+		final BigDecimal price,
 		final double weight,
 		final int stock)
 	{
-		this.setUuid();
 		this.setName(name);
 		this.setDescription(desc);
 		this.setCategory(category);
@@ -61,16 +70,6 @@ public class Product implements Serializable
 		this.description = description;
 	}
 
-	public String getImageUrl()
-	{
-		return this.imageUrl;
-	}
-
-	public void setImageUrl(final String imageUrl)
-	{
-		this.imageUrl = imageUrl;
-	}
-
 	public ProductCategory getCategory()
 	{
 		return this.category;
@@ -81,12 +80,12 @@ public class Product implements Serializable
 		this.category = category;
 	}
 
-	public Double getUnitPrice()
+	public BigDecimal getUnitPrice()
 	{
 		return this.unitPrice;
 	}
 
-	public void setUnitPrice(final Double unitPrice)
+	public void setUnitPrice(final BigDecimal unitPrice)
 	{
 		this.unitPrice = unitPrice;
 	}
@@ -111,4 +110,23 @@ public class Product implements Serializable
 		this.unitsInStock = unitsInStock;
 	}
 
+	public String getImageName()
+	{
+		return this.imageName;
+	}
+
+	public void setImageName(final String imageName)
+	{
+		this.imageName = imageName;
+	}
+	
+	public byte[] getImageBytes()
+	{
+		return this.imageBytes;
+	}
+	
+	public void setImageBytes(final byte[] imageBytes)
+	{
+		this.imageBytes = imageBytes;
+	}
 }

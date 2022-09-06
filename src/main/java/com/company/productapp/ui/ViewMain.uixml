@@ -12,33 +12,41 @@
 <VerticalLayout xmlns:x="http://xml.xdev-software.com/xdevuiml" x:name="ViewMain" x:route="">
     <x:constraints zpos="0" width="100%" height="100%" />
     <Div x:name="divHeader">
-        <x:constraints width="-1px" height="-1px" flex-grow="0.0" />
+        <x:constraints width="100%" height="-1px" flex-grow="0.0" />
         <HorizontalLayout x:name="horizontalLayout">
             <x:constraints width="-1px" alignment="AUTO" height="-1px" flex-grow="0.0" />
-            <FilterComponent x:searchableProperties="category,description,name,uuid" x:name="filterComponent" x:filterableProperties="category,description,name,unitPrice,unitWeight,unitsInStock,uuid" x:grid="grid" x:persist="true">
-                <x:constraints width="-1px" height="-1px" flex-grow="1.0" />
+            <FilterComponent x:searchableProperties="uuid,name,description,category.name" x:name="filterComponent" x:filterableProperties="uuid,name,description,category.name,unitPrice,unitWeight,unitsInStock" x:grid="grid" x:persist="true" x:persistValue="true">
+                <x:constraints width="-1px" height="0%" flex-grow="1.0" />
             </FilterComponent>
-            <Button x:name="buttonAdd" text="Add new Product">
+            <Button x:name="buttonAdd" text="add new product">
+                <x:icon src="com.flowingcode.vaadin.addons.ironicons.IronIcons#ADD" />
                 <x:constraints width="-1px" height="-1px" flex-grow="0.0" />
+                <x:event>click.onComponentEvent</x:event>
             </Button>
         </HorizontalLayout>
     </Div>
     <Div x:name="divBody">
         <x:constraints width="100%" height="100%" flex-grow="0.0" />
-        <Grid x:name="grid" x:persist="true">
+        <Grid dropMode="com.vaadin.flow.component.grid.dnd.GridDropMode.BETWEEN" x:name="grid" x:persist="true">
             <x:typeArguments>
                 <typeArgument type="Product" />
             </x:typeArguments>
             <x:constraints width="100%" height="100%" />
             <x:columns>
-                <column property="imageUrl" sortable="true" />
-                <column property="uuid" sortable="true" />
-                <column property="name" sortable="true" />
-                <column property="description" sortable="true" />
-                <column property="category.name" sortable="true" />
-                <column property="unitPrice" sortable="true" />
-                <column property="unitWeight" sortable="true" />
-                <column property="unitsInStock" sortable="true" />
+                <column property="uuid" header="ID" sortable="true" />
+                <column property="name" header="Name" sortable="true" />
+                <column property="description" header="Description" sortable="true" />
+                <column property="category.name" header="Category" sortable="true" />
+                <column property="unitPrice" header="Unit Price" sortable="true">
+                    <renderer nullRepresentation="" type="NumberRenderer">
+                        <numberFormat format="Currency" pattern="" currency="USD" locale="default" />
+                    </renderer>
+                </column>
+                <column property="unitWeight" header="Unit Weight" sortable="true" />
+                <column property="unitsInStock" header="Stock" sortable="true" />
+                <column property="renderer" header="...." autoWidth="true" flexGrow="0" textAlign="CENTER">
+                    <renderer type="RenderedComponent" renderedComponent="com.company.productapp.ui.gencols.GenColProductFunctions" />
+                </column>
             </x:columns>
         </Grid>
     </Div>

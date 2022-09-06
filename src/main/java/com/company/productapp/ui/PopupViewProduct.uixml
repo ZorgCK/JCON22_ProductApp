@@ -2,17 +2,51 @@
 <!DOCTYPE xml>
 <?xdevuiml version="1.0"?>
 <?template BROWSER_XGA?>
+<?import com.company.productapp.domain.Product?>
+<?import com.company.productapp.domain.ProductCategory?>
 <?import com.vaadin.flow.component.button.Button?>
+<?import com.vaadin.flow.component.combobox.ComboBox?>
 <?import com.vaadin.flow.component.formlayout.FormLayout?>
 <?import com.vaadin.flow.component.formlayout.FormLayout.FormItem?>
 <?import com.vaadin.flow.component.html.Label?>
 <?import com.vaadin.flow.component.orderedlayout.HorizontalLayout?>
 <?import com.vaadin.flow.component.orderedlayout.VerticalLayout?>
+<?import com.vaadin.flow.component.textfield.BigDecimalField?>
 <?import com.vaadin.flow.component.textfield.IntegerField?>
 <?import com.vaadin.flow.component.textfield.NumberField?>
 <?import com.vaadin.flow.component.textfield.TextField?>
-<VerticalLayout xmlns:x="http://xml.xdev-software.com/xdevuiml" x:name="PopupViewProduct">
-    <x:constraints width="100%" zpos="0" height="100%" />
+<?import com.vaadin.flow.component.upload.Upload?>
+<?import com.vaadin.flow.data.binder.Binder?>
+<VerticalLayout xmlns:x="http://xml.xdev-software.com/xdevuiml" x:name="PopupViewProduct" padding="false">
+    <x:constraints zpos="0" width="100%" height="100%" />
+    <Binder x:name="binder">
+        <x:typeArguments>
+            <typeArgument type="Product" />
+        </x:typeArguments>
+        <x:bindings>
+            <binding field="textFieldImage" property="imageUrl" required="false" nullRepresentation="" readOnly="false">
+                <validator errorMessage="" type="Bean" />
+            </binding>
+            <binding field="textFieldName" property="name" required="true" nullRepresentation="" readOnly="false">
+                <validator minLength="5" errorMessage="Name must contain at least 5 characters" type="StringLength" />
+            </binding>
+            <binding field="textFieldDesc" property="description" required="true" nullRepresentation="" readOnly="false">
+                <validator minLength="12" errorMessage="Description must containt at least 12 characters" type="StringLength" />
+            </binding>
+            <binding field="comboBoxCategory" property="category" required="true" readOnly="false">
+                <validator errorMessage="You need to choose a category for the product" type="Bean" />
+            </binding>
+            <binding field="bigDecimalPrice" property="unitPrice" required="true" readOnly="false">
+                <validator minValue="0.01" errorMessage="The price cant be lower than 0.01" type="Range" />
+            </binding>
+            <binding field="numberFieldWeight" property="unitWeight" required="true" readOnly="false">
+                <validator minValue="0.001" errorMessage="The weight of the product cant be lower than 0,001" type="Range" />
+            </binding>
+            <binding field="integerFieldStock" property="unitsInStock" required="true" readOnly="false">
+                <validator minValue="0" errorMessage="The amount of products in stock cant be lower than 0" type="Range" />
+            </binding>
+        </x:bindings>
+    </Binder>
     <FormLayout x:name="formLayout">
         <x:responsiveSteps>
             <entry minWidth="0px" columns="1" labelsPosition="TOP" />
@@ -20,22 +54,13 @@
             <entry minWidth="1000px" columns="3" labelsPosition="ASIDE" />
         </x:responsiveSteps>
         <x:constraints width="-1px" height="-1px" flex-grow="0.0" />
-        <FormItem x:name="formItem">
-            <x:constraints width="0px" height="0px" />
-            <Label x:name="labelImageUrl" text="ImageURL">
-                <x:constraints width="0px" label="true" height="0px" />
-            </Label>
-            <TextField x:name="textFieldImage">
-                <x:constraints width="-1px" height="0px" />
-            </TextField>
-        </FormItem>
         <FormItem x:name="formItem2">
             <x:constraints width="0px" height="0px" />
             <Label x:name="labelName" text="Name">
                 <x:constraints width="0px" label="true" height="0px" />
             </Label>
-            <TextField x:name="textFieldName">
-                <x:constraints width="-1px" height="0px" />
+            <TextField required="true" x:name="textFieldName" requiredIndicatorVisible="true" preventInvalidInput="true">
+                <x:constraints width="100%" height="0px" />
             </TextField>
         </FormItem>
         <FormItem x:name="formItem3">
@@ -43,8 +68,8 @@
             <Label x:name="labelDesc" text="Description">
                 <x:constraints width="0px" label="true" height="0px" />
             </Label>
-            <TextField x:name="textFieldDesc">
-                <x:constraints width="-1px" height="0px" />
+            <TextField x:name="textFieldDesc" preventInvalidInput="true">
+                <x:constraints width="100%" height="0px" />
             </TextField>
         </FormItem>
         <FormItem x:name="formItem4">
@@ -52,26 +77,30 @@
             <Label x:name="labelCategory" text="Category">
                 <x:constraints width="0px" label="true" height="0px" />
             </Label>
-            <TextField x:name="textFieldCategory">
-                <x:constraints width="-1px" height="0px" />
-            </TextField>
+            <ComboBox required="true" x:name="comboBoxCategory" requiredIndicatorVisible="true" preventInvalidInput="true">
+                <x:typeArguments>
+                    <typeArgument type="ProductCategory" />
+                </x:typeArguments>
+                <x:constraints width="100%" height="0px" />
+                <x:itemLabel type="Property" data="name" />
+            </ComboBox>
         </FormItem>
         <FormItem x:name="formItem5">
             <x:constraints width="0px" height="0px" />
             <Label x:name="labelPrice" text="Unit Price">
                 <x:constraints width="0px" label="true" height="0px" />
             </Label>
-            <NumberField x:name="numberFieldPrice">
-                <x:constraints width="0px" alignment="AUTO" height="0px" flex-grow="0.0" />
-            </NumberField>
+            <BigDecimalField x:name="bigDecimalPrice" requiredIndicatorVisible="true">
+                <x:constraints width="100%" height="0px" />
+            </BigDecimalField>
         </FormItem>
         <FormItem x:name="formItem6">
             <x:constraints width="0px" height="0px" />
             <Label x:name="labelWeight" text="Unit Weight">
                 <x:constraints width="0px" label="true" height="0px" />
             </Label>
-            <NumberField x:name="numberFieldWeight">
-                <x:constraints width="0px" alignment="AUTO" height="0px" flex-grow="0.0" />
+            <NumberField x:name="numberFieldWeight" requiredIndicatorVisible="true">
+                <x:constraints width="100%" alignment="AUTO" height="0px" flex-grow="0.0" />
             </NumberField>
         </FormItem>
         <FormItem x:name="formItem7">
@@ -79,18 +108,25 @@
             <Label x:name="labelStock" text="Units in stock">
                 <x:constraints width="0px" label="true" height="0px" />
             </Label>
-            <IntegerField x:name="integerFieldStock">
-                <x:constraints width="0px" alignment="AUTO" height="0px" flex-grow="0.0" />
+            <IntegerField x:name="integerFieldStock" requiredIndicatorVisible="true">
+                <x:constraints width="100%" alignment="AUTO" height="0px" flex-grow="0.0" />
             </IntegerField>
         </FormItem>
+        <Upload autoUpload="true" x:name="upload" maxFiles="1" maxWidth="">
+            <x:constraints width="100%" alignment="AUTO" height="100%" flex-grow="0.0" />
+            <x:event>succeeded.onComponentEvent</x:event>
+            <x:event>fileRejected.onComponentEvent</x:event>
+        </Upload>
     </FormLayout>
-    <HorizontalLayout x:name="horizontalLayout">
-        <x:constraints width="-1px" height="-1px" flex-grow="0.0" />
-        <Button x:name="buttonSave" text="Save">
-            <x:constraints width="0px" height="0px" flex-grow="0.0" />
-        </Button>
+    <HorizontalLayout x:name="horizontalLayout" padding="true">
+        <x:constraints width="100%" alignment="START" height="-1px" flex-grow="0.0" />
         <Button x:name="buttonCancel" text="Cancel">
-            <x:constraints width="0px" height="0px" flex-grow="0.0" />
+            <x:constraints width="100%" height="0px" flex-grow="0.0" />
+            <x:event>click.onComponentEvent</x:event>
+        </Button>
+        <Button x:themeVariants="LUMO_PRIMARY" x:name="buttonSave" text="Save">
+            <x:constraints width="100%" alignment="START" height="0px" flex-grow="0.0" />
+            <x:event>click.onComponentEvent</x:event>
         </Button>
     </HorizontalLayout>
 </VerticalLayout>

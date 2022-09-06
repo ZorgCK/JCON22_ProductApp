@@ -1,78 +1,132 @@
 
 package com.company.productapp.ui;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Currency;
 import java.util.Optional;
 
+import com.company.productapp.dal.ProductCategoryDAO;
 import com.company.productapp.dal.ProductDAO;
 import com.company.productapp.domain.Product;
 import com.company.productapp.domain.ProductCategory;
 import com.company.productapp.microstream.MicroStream;
-import com.rapidclipse.framework.server.resources.CaptionUtils;
+import com.company.productapp.ui.gencols.GenColProductFunctions;
+import com.flowingcode.vaadin.addons.ironicons.IronIcons;
+import com.rapidclipse.framework.server.data.format.NumberFormatBuilder;
+import com.rapidclipse.framework.server.data.renderer.RenderedComponent;
 import com.rapidclipse.framework.server.ui.filter.FilterComponent;
 import com.rapidclipse.framework.server.ui.filter.GridFilterSubjectFactory;
+import com.rapidclipse.framework.server.ui.filter.SubsetDataProvider;
 import com.rapidclipse.framework.server.ui.persistence.PersistFlag;
+import com.rapidclipse.framework.server.ui.persistence.PersistValueFlag;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.dnd.GridDropMode;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.renderer.NumberRenderer;
 import com.vaadin.flow.router.Route;
 
 
 @Route("")
 public class ViewMain extends VerticalLayout
 {
-
+	
 	/**
 	 *
 	 */
-
+	
 	public ViewMain()
 	{
-
 		super();
 		this.initUI();
-
-		MicroStream.storageManager.store(MicroStream.root.getProducts().addAll(ViewMain.createProducts()));
-
-		this.grid.setItems(ProductDAO.findAll());
-
-		this.grid.addComponentColumn(product -> {
-			final Button editButton = new Button("Edit");
-			editButton.addClickListener(e -> {
-				final Dialog dialog = new Dialog();
-				dialog.add(new PopupViewProduct());
-				if(!dialog.isOpened())
-				{
-					dialog.open();
-				}
-				this.grid.getEditor()
-					.editItem(product);
-			});
-			return editButton;
-		});
 		
-		this.grid.addComponentColumn(item -> new Button("Löschen", click -> {
-			ProductDAO.delete(item);
-			this.grid.getDataProvider().refreshAll();
-		}));
-
-		// final List<Product> products = new ArrayList<>();
-		// products.add(new Product("test", "test", "test", 12, 1, 0));
-		// this.grid.setItems(products);
+		if(MicroStream.root.getCategory().isEmpty())
+		{
+			MicroStream.root.getCategory().addAll(ViewMain.createCategories());
+			MicroStream.root.getCategory().stream().forEach(category -> category.setUuid());
+			MicroStream.storageManager.store(MicroStream.root.getCategory());
+		}
+		
+		if(MicroStream.root.getProducts().isEmpty())
+		{
+			MicroStream.root.getProducts().addAll(ViewMain.createProducts());
+			MicroStream.root.getProducts().stream().forEach(product -> product.setUuid());
+			MicroStream.storageManager.store(MicroStream.root.getProducts());
+		}
+		
+		this.grid.setItemDetailsRenderer(this.createPersonDetailsRenderer());
+		this.grid.setItems(ProductDAO.findAll());
+		
+		this.filterComponent.connectWith(this.grid.getDataProvider());
+		this.filterComponent.setFilterSubject(GridFilterSubjectFactory.CreateFilterSubject(this.grid,
+			Arrays.asList("uuid", "name", "description", "category.name"),
+			Arrays.asList("uuid", "name", "description", "category.name", "unitPrice", "unitWeight", "unitsInStock")));
+		
+		new ProductCategoryDAO();
+		this.filterComponent.addSubsetDataProvider(
+			ProductCategory.class,
+			SubsetDataProvider.New(ProductCategoryDAO.findAll()));
+		
+		UI.getCurrent().getSession().setAttribute("grid", this.grid);
+		
 	}
-
+	
+	private ComponentRenderer<ViewProductDetails, Product> createPersonDetailsRenderer()
+	{
+		
+		return new ComponentRenderer<>(ViewProductDetails::new,
+			ViewProductDetails::setProduct);
+	}
+	
 	private static Collection<Product> createProducts()
 	{
+		
 		return Arrays.asList(
-			new Product("Test1", "Test1", null, 1, 1, 1),
-			new Product("Test2", "Test2", null, 2, 2, 2),
-			new Product("Test3", "Test3", null, 3, 3, 3));
+			new Product("Gaming Mouse", "This gaming mouse is a test product",
+				ProductCategoryDAO.findByName("Mouse"), new BigDecimal(39.99), 1,
+				78),
+			new Product("Gaming Keyboard", "This gaming keyboard is a test product",
+				ProductCategoryDAO.findByName("Keyboard"), new BigDecimal(149.99),
+				3, 61),
+			new Product("Gaming Computer", "This gaming computer is a test product",
+				ProductCategoryDAO.findByName("Computer"), new BigDecimal(1382.98),
+				12, 14));
 	}
-
+	
+	private static Collection<ProductCategory> createCategories()
+	{
+		return Arrays.asList(
+			new ProductCategory("Mouse"),
+			new ProductCategory("Keyboard"),
+			new ProductCategory("Computer"));
+	}
+	
+	/**
+	 * Event handler delegate method for the {@link Button} {@link #buttonAdd}.
+	 *
+	 * @see ComponentEventListener#onComponentEvent(ComponentEvent)
+	 * @eventHandlerDelegate Do NOT delete, used by UI designer!
+	 */
+	private void buttonAdd_onClick(final ClickEvent<Button> event)
+	{
+		final Dialog dialog = new Dialog(new PopupViewProduct(new Product()));
+		UI.getCurrent().getSession().setAttribute("dialog", dialog);
+		dialog.setWidth("50%");
+		dialog.setHeight("27%");
+		dialog.open();
+	}
+	
 	/* WARNING: Do NOT edit!<br>The content of this method is always regenerated by the UI designer. */
 	// <generated-code name="initUI">
 	private void initUI()
@@ -86,35 +140,33 @@ public class ViewMain extends VerticalLayout
 
 		this.filterComponent.setId("filterComponent");
 		PersistFlag.set(this.filterComponent, true);
-		this.buttonAdd.setText("Add new Product");
+		PersistValueFlag.set(this.filterComponent, true);
+		this.buttonAdd.setText("add new product");
+		this.buttonAdd.setIcon(IronIcons.ADD.create());
+		this.grid.setDropMode(GridDropMode.BETWEEN);
 		this.grid.setId("grid");
 		PersistFlag.set(this.grid, true);
-		this.grid.addColumn(Product::getImageUrl).setKey("imageUrl")
-			.setHeader(CaptionUtils.resolveCaption(Product.class, "imageUrl")).setSortable(true);
-		this.grid.addColumn(Product::getUuid).setKey("uuid")
-			.setHeader(CaptionUtils.resolveCaption(Product.class, "uuid"))
-			.setSortable(true);
-		this.grid.addColumn(Product::getName).setKey("name")
-			.setHeader(CaptionUtils.resolveCaption(Product.class, "name"))
-			.setSortable(true);
-		this.grid.addColumn(Product::getDescription).setKey("description")
-			.setHeader(CaptionUtils.resolveCaption(Product.class, "description")).setSortable(true);
+		this.grid.addColumn(Product::getUuid).setKey("uuid").setHeader("ID").setSortable(true);
+		this.grid.addColumn(Product::getName).setKey("name").setHeader("Name").setSortable(true);
+		this.grid.addColumn(Product::getDescription).setKey("description").setHeader("Description").setSortable(true);
 		this.grid
 			.addColumn(v -> Optional.ofNullable(v).map(Product::getCategory).map(ProductCategory::getName).orElse(null))
-			.setKey("category.name").setHeader(CaptionUtils.resolveCaption(Product.class, "category.name"))
-			.setSortable(true);
-		this.grid.addColumn(Product::getUnitPrice).setKey("unitPrice")
-			.setHeader(CaptionUtils.resolveCaption(Product.class, "unitPrice")).setSortable(true);
-		this.grid.addColumn(Product::getUnitWeight).setKey("unitWeight")
-			.setHeader(CaptionUtils.resolveCaption(Product.class, "unitWeight")).setSortable(true);
-		this.grid.addColumn(Product::getUnitsInStock).setKey("unitsInStock")
-			.setHeader(CaptionUtils.resolveCaption(Product.class, "unitsInStock")).setSortable(true);
+			.setKey("category.name").setHeader("Category").setSortable(true);
+		this.grid
+			.addColumn(new NumberRenderer<>(Product::getUnitPrice,
+				NumberFormatBuilder.Currency().currency(Currency.getInstance("USD")).build(), ""))
+			.setKey("unitPrice").setHeader("Unit Price").setSortable(true);
+		this.grid.addColumn(Product::getUnitWeight).setKey("unitWeight").setHeader("Unit Weight").setSortable(true);
+		this.grid.addColumn(Product::getUnitsInStock).setKey("unitsInStock").setHeader("Stock").setSortable(true);
+		this.grid.addColumn(RenderedComponent.Renderer(GenColProductFunctions::new)).setKey("renderer")
+			.setHeader("....")
+			.setSortable(false).setAutoWidth(true).setFlexGrow(0).setTextAlign(ColumnTextAlign.CENTER);
 		this.grid.setSelectionMode(Grid.SelectionMode.SINGLE);
 
 		this.filterComponent.connectWith(this.grid.getDataProvider());
 		this.filterComponent.setFilterSubject(GridFilterSubjectFactory.CreateFilterSubject(this.grid,
-			Arrays.asList("category", "description", "name", "uuid"),
-			Arrays.asList("category", "description", "name", "unitPrice", "unitWeight", "unitsInStock", "uuid")));
+			Arrays.asList("uuid", "name", "description", "category.name"),
+			Arrays.asList("uuid", "name", "description", "category.name", "unitPrice", "unitWeight", "unitsInStock")));
 
 		this.filterComponent.setSizeUndefined();
 		this.buttonAdd.setSizeUndefined();
@@ -124,12 +176,15 @@ public class ViewMain extends VerticalLayout
 		this.divHeader.add(this.horizontalLayout);
 		this.grid.setSizeFull();
 		this.divBody.add(this.grid);
-		this.divHeader.setSizeUndefined();
+		this.divHeader.setWidthFull();
+		this.divHeader.setHeight(null);
 		this.divBody.setSizeFull();
 		this.add(this.divHeader, this.divBody);
 		this.setSizeFull();
-	} // </generated-code>
 
+		this.buttonAdd.addClickListener(this::buttonAdd_onClick);
+	} // </generated-code>
+	
 	// <generated-code name="variables">
 	private Button           buttonAdd;
 	private HorizontalLayout horizontalLayout;
@@ -137,5 +192,5 @@ public class ViewMain extends VerticalLayout
 	private FilterComponent  filterComponent;
 	private Grid<Product>    grid;
 	// </generated-code>
-
+	
 }

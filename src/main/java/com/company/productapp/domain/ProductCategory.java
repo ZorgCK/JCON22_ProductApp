@@ -9,7 +9,7 @@ public class ProductCategory implements Serializable
 {
 
 	private String uuid;
-	private String name;
+	private String categoryName;
 
 	public ProductCategory(final String name)
 	{
@@ -28,12 +28,12 @@ public class ProductCategory implements Serializable
 
 	public String getName()
 	{
-		return this.name;
+		return this.categoryName;
 	}
 
 	public void setName(final String name)
 	{
-		this.name = name;
+		this.categoryName = name;
 	}
 
 }
