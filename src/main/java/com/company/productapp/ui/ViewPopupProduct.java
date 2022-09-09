@@ -186,7 +186,7 @@ public class ViewPopupProduct extends VerticalLayout
 		this.buttonCancel      = new Button();
 		this.buttonSave        = new Button();
 		this.binder            = new Binder<>();
-
+		
 		this.setPadding(false);
 		this.formLayout.setResponsiveSteps(
 			new FormLayout.ResponsiveStep("0px", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP),
@@ -202,7 +202,7 @@ public class ViewPopupProduct extends VerticalLayout
 		this.comboBoxCategory.setRequired(true);
 		this.comboBoxCategory.setRequiredIndicatorVisible(true);
 		this.comboBoxCategory.setPreventInvalidInput(true);
-		this.comboBoxCategory.setItemLabelGenerator(ItemLabelGeneratorFactory.NonNull(v -> null));
+		this.comboBoxCategory.setItemLabelGenerator(ItemLabelGeneratorFactory.NonNull(Category::getCategoryName));
 		this.labelPrice.setText("Unit Price");
 		this.bigDecimalPrice.setRequiredIndicatorVisible(true);
 		this.labelWeight.setText("Unit Weight");
@@ -216,7 +216,7 @@ public class ViewPopupProduct extends VerticalLayout
 		this.buttonCancel.setText("Cancel");
 		this.buttonSave.setText("Save");
 		this.buttonSave.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-
+		
 		this.binder.forField(this.textFieldName).asRequired().withNullRepresentation("")
 			.withValidator(new StringLengthValidator("Name must containt at least 5 characters", 5, null))
 			.bind(Product::getProductName, Product::setProductName);
@@ -233,7 +233,7 @@ public class ViewPopupProduct extends VerticalLayout
 		this.binder.forField(this.integerFieldStock).asRequired()
 			.withValidator(RangeValidator.of("The amount of products in stock cant be lower than 0", 0, null))
 			.bind(Product::getUnitsInStock, Product::setUnitsInStock);
-
+		
 		this.labelName.setSizeUndefined();
 		this.labelName.getElement().setAttribute("slot", "label");
 		this.textFieldName.setWidthFull();
@@ -265,8 +265,7 @@ public class ViewPopupProduct extends VerticalLayout
 		this.integerFieldStock.setHeight(null);
 		this.formItem7.add(this.labelStock, this.integerFieldStock);
 		this.upload.setSizeFull();
-		this.formLayout.add(this.formItem2, this.formItem3, this.formItem4, this.formItem5, this.formItem6,
-			this.formItem7,
+		this.formLayout.add(this.formItem2, this.formItem3, this.formItem4, this.formItem5, this.formItem6, this.formItem7,
 			this.upload);
 		this.buttonCancel.setWidthFull();
 		this.buttonCancel.setHeight(null);
@@ -280,7 +279,7 @@ public class ViewPopupProduct extends VerticalLayout
 		this.add(this.formLayout, this.horizontalLayout);
 		this.setHorizontalComponentAlignment(FlexComponent.Alignment.START, this.horizontalLayout);
 		this.setSizeFull();
-
+		
 		this.upload.addSucceededListener(this::upload_onSucceeded);
 		this.upload.addFileRejectedListener(this::upload_onFileRejected);
 		this.buttonCancel.addClickListener(this::buttonCancel_onClick);

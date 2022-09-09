@@ -3,13 +3,14 @@
 <?xdevuiml version="1.0"?>
 <?template BROWSER_WUXGA?>
 <?import com.company.productapp.domain.Product?>
+<?import com.company.productapp.ui.MainLayout?>
 <?import com.rapidclipse.framework.server.ui.filter.FilterComponent?>
 <?import com.vaadin.flow.component.button.Button?>
 <?import com.vaadin.flow.component.grid.Grid?>
 <?import com.vaadin.flow.component.html.Div?>
 <?import com.vaadin.flow.component.orderedlayout.HorizontalLayout?>
 <?import com.vaadin.flow.component.orderedlayout.VerticalLayout?>
-<VerticalLayout xmlns:x="http://xml.xdev-software.com/xdevuiml" x:name="ViewMain" x:route="">
+<VerticalLayout xmlns:x="http://xml.xdev-software.com/xdevuiml" x:routeLayout="MainLayout" x:name="ViewProducts" x:route="products">
     <x:constraints zpos="0" width="100%" height="100%" />
     <Div x:name="divHeader">
         <x:constraints width="100%" height="-1px" flex-grow="0.0" />
@@ -38,7 +39,7 @@
                 <column property="category.categoryName" header="Category" sortable="true" />
                 <column property="description" header="Description" sortable="true" />
                 <column property="unitPrice" header="Unit Price" sortable="true">
-                    <renderer type="NumberRenderer" nullRepresentation="">
+                    <renderer nullRepresentation="" type="NumberRenderer">
                         <numberFormat format="Currency" pattern="" currency="USD" locale="default" />
                     </renderer>
                 </column>
