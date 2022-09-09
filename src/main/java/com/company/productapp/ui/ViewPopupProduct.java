@@ -6,22 +6,21 @@ import java.math.BigDecimal;
 
 import org.apache.commons.io.IOUtils;
 
-import com.company.productapp.dal.ProductCategoryDAO;
-import com.company.productapp.dal.ProductDAO;
+import com.company.productapp.dal.DAOCategory;
+import com.company.productapp.dal.DAOProduct;
+import com.company.productapp.domain.Category;
 import com.company.productapp.domain.Product;
-import com.company.productapp.domain.ProductCategory;
 import com.rapidclipse.framework.server.ui.ItemLabelGeneratorFactory;
+import com.rapidclipse.framework.server.ui.UIUtils;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.formlayout.FormLayout.FormItem;
-import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -39,47 +38,48 @@ import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.validator.RangeValidator;
 import com.vaadin.flow.data.validator.StringLengthValidator;
+import com.vaadin.flow.function.SerializableRunnable;
 
 
-public class PopupViewProduct extends VerticalLayout
+public class ViewPopupProduct extends VerticalLayout
 {
-	private static Product     PRODUCT;
-	private final MemoryBuffer memoryBuffer = new MemoryBuffer();
-
+	private Product              product      = new Product();
+	private final MemoryBuffer   memoryBuffer = new MemoryBuffer();
+	private SerializableRunnable onOk         = null;
+	
 	/**
 	 *
 	 */
-	public PopupViewProduct(final Product product)
+	public ViewPopupProduct(final Product product, final SerializableRunnable onOk)
 	{
 		super();
+		this.onOk    = onOk;
+		this.product = product;
 		this.initUI();
-
+		
 		this.upload.setAcceptedFileTypes(".jpg", ".jpeg", ".png");
 		this.upload.setReceiver(this.memoryBuffer);
-
+		
 		final int maxFileSize = 800 * 1024;
 		this.upload.setMaxFileSize(maxFileSize);
-
+		
 		this.binder.validate();
-
 		this.binder.addValueChangeListener(vcl -> {
 			this.binder.validate();
 		});
-
-		this.comboBoxCategory.setItems(ProductCategoryDAO.findAll());
-
-		if(product.getUuid() != null)
+		
+		this.comboBoxCategory.setItems(DAOCategory.findAll());
+		
+		if(product.getProductUuid() != null)
 		{
 			this.binder.readBean(product);
 		}
-
-		PopupViewProduct.PRODUCT = product;
-		if(product.getUuid() != null)
+		if(product.getProductUuid() != null)
 		{
 			this.binder.setBean(product);
 		}
 	}
-
+	
 	/**
 	 * Event handler delegate method for the {@link Button} {@link #buttonSave}.
 	 *
@@ -88,38 +88,29 @@ public class PopupViewProduct extends VerticalLayout
 	 */
 	private void buttonSave_onClick(final ClickEvent<Button> event)
 	{
-		try
+		if(this.binder.writeBeanIfValid(this.product) == false)
 		{
-			if(this.binder.writeBeanIfValid(PopupViewProduct.PRODUCT) == false)
+			Notification.show("Some Fields are still invadlid!").setDuration(800);
+		}
+		else
+		{
+			if(this.product.getProductUuid() == null)
 			{
-				Notification.show("Some Fields are still invadlid!").setDuration(800);
-			}
-
-			if(PopupViewProduct.PRODUCT.getUuid() == null)
-			{
-				ProductDAO.insert(PopupViewProduct.PRODUCT);
+				DAOProduct.insert(this.product);
 			}
 			else
 			{
-				ProductDAO.update(PopupViewProduct.PRODUCT);
+				DAOProduct.update(this.product);
 			}
-		}
-		catch(final NullPointerException npe)
-		{
-			npe.printStackTrace();
-		}
-		finally
-		{
-			final Grid<Product> grid = (Grid<Product>)UI.getCurrent().getSession().getAttribute("grid");
-			grid.getDataProvider().refreshAll();
-			final Dialog dialog = (Dialog)UI.getCurrent().getSession().getAttribute("dialog");
-			if(dialog.isOpened())
-			{
-				dialog.close();
-			}
+			
+			// iterate till open Dialog is found
+			final Dialog parent = UIUtils.getNextParent(this, Dialog.class);
+			parent.close();
+
+			this.onOk.run();
 		}
 	}
-
+	
 	/**
 	 * Event handler delegate method for the {@link Button} {@link #buttonCancel}.
 	 *
@@ -128,13 +119,11 @@ public class PopupViewProduct extends VerticalLayout
 	 */
 	private void buttonCancel_onClick(final ClickEvent<Button> event)
 	{
-		final Dialog dialog = (Dialog)UI.getCurrent().getSession().getAttribute("dialog");
-		if(dialog.isOpened())
-		{
-			dialog.close();
-		}
+		this.product = new Product();
+		final Dialog parent = UIUtils.getNextParent(this, Dialog.class);
+		parent.close();
 	}
-
+	
 	/**
 	 * Event handler delegate method for the {@link Upload} {@link #upload}.
 	 *
@@ -145,15 +134,15 @@ public class PopupViewProduct extends VerticalLayout
 	{
 		try
 		{
-			PopupViewProduct.PRODUCT.setImageName(event.getFileName());
-			PopupViewProduct.PRODUCT.setImageBytes(IOUtils.toByteArray(this.memoryBuffer.getInputStream()));
+			this.product.setImageName(event.getFileName());
+			this.product.setImageBytes(IOUtils.toByteArray(this.memoryBuffer.getInputStream()));
 		}
 		catch(final IOException e)
 		{
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Event handler delegate method for the {@link Upload} {@link #upload}.
 	 *
@@ -168,7 +157,7 @@ public class PopupViewProduct extends VerticalLayout
 			Notification.Position.MIDDLE);
 		notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
 	}
-
+	
 	/* WARNING: Do NOT edit!<br>The content of this method is always regenerated by the UI designer. */
 	// <generated-code name="initUI">
 	private void initUI()
@@ -197,7 +186,7 @@ public class PopupViewProduct extends VerticalLayout
 		this.buttonCancel      = new Button();
 		this.buttonSave        = new Button();
 		this.binder            = new Binder<>();
-		
+
 		this.setPadding(false);
 		this.formLayout.setResponsiveSteps(
 			new FormLayout.ResponsiveStep("0px", 1, FormLayout.ResponsiveStep.LabelsPosition.TOP),
@@ -213,7 +202,7 @@ public class PopupViewProduct extends VerticalLayout
 		this.comboBoxCategory.setRequired(true);
 		this.comboBoxCategory.setRequiredIndicatorVisible(true);
 		this.comboBoxCategory.setPreventInvalidInput(true);
-		this.comboBoxCategory.setItemLabelGenerator(ItemLabelGeneratorFactory.NonNull(ProductCategory::getName));
+		this.comboBoxCategory.setItemLabelGenerator(ItemLabelGeneratorFactory.NonNull(v -> null));
 		this.labelPrice.setText("Unit Price");
 		this.bigDecimalPrice.setRequiredIndicatorVisible(true);
 		this.labelWeight.setText("Unit Weight");
@@ -227,12 +216,12 @@ public class PopupViewProduct extends VerticalLayout
 		this.buttonCancel.setText("Cancel");
 		this.buttonSave.setText("Save");
 		this.buttonSave.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-		
+
 		this.binder.forField(this.textFieldName).asRequired().withNullRepresentation("")
-			.withValidator(new StringLengthValidator("Name must contain at least 5 characters", 5, null))
-			.bind(Product::getName, Product::setName);
+			.withValidator(new StringLengthValidator("Name must containt at least 5 characters", 5, null))
+			.bind(Product::getProductName, Product::setProductName);
 		this.binder.forField(this.textFieldDesc).asRequired().withNullRepresentation("")
-			.withValidator(new StringLengthValidator("Description must containt at least 12 characters", 12, null))
+			.withValidator(new StringLengthValidator("Description must containt at least 15 characters", 15, null))
 			.bind(Product::getDescription, Product::setDescription);
 		this.binder.forField(this.comboBoxCategory).asRequired().bind(Product::getCategory, Product::setCategory);
 		this.binder.forField(this.bigDecimalPrice).asRequired()
@@ -244,7 +233,7 @@ public class PopupViewProduct extends VerticalLayout
 		this.binder.forField(this.integerFieldStock).asRequired()
 			.withValidator(RangeValidator.of("The amount of products in stock cant be lower than 0", 0, null))
 			.bind(Product::getUnitsInStock, Product::setUnitsInStock);
-		
+
 		this.labelName.setSizeUndefined();
 		this.labelName.getElement().setAttribute("slot", "label");
 		this.textFieldName.setWidthFull();
@@ -276,7 +265,8 @@ public class PopupViewProduct extends VerticalLayout
 		this.integerFieldStock.setHeight(null);
 		this.formItem7.add(this.labelStock, this.integerFieldStock);
 		this.upload.setSizeFull();
-		this.formLayout.add(this.formItem2, this.formItem3, this.formItem4, this.formItem5, this.formItem6, this.formItem7,
+		this.formLayout.add(this.formItem2, this.formItem3, this.formItem4, this.formItem5, this.formItem6,
+			this.formItem7,
 			this.upload);
 		this.buttonCancel.setWidthFull();
 		this.buttonCancel.setHeight(null);
@@ -290,26 +280,26 @@ public class PopupViewProduct extends VerticalLayout
 		this.add(this.formLayout, this.horizontalLayout);
 		this.setHorizontalComponentAlignment(FlexComponent.Alignment.START, this.horizontalLayout);
 		this.setSizeFull();
-		
+
 		this.upload.addSucceededListener(this::upload_onSucceeded);
 		this.upload.addFileRejectedListener(this::upload_onFileRejected);
 		this.buttonCancel.addClickListener(this::buttonCancel_onClick);
 		this.buttonSave.addClickListener(this::buttonSave_onClick);
 	} // </generated-code>
-
+	
 	// <generated-code name="variables">
-	private FormLayout                formLayout;
-	private Button                    buttonCancel, buttonSave;
-	private BigDecimalField           bigDecimalPrice;
-	private Upload                    upload;
-	private NumberField               numberFieldWeight;
-	private IntegerField              integerFieldStock;
-	private HorizontalLayout          horizontalLayout;
-	private Label                     labelName, labelDesc, labelCategory, labelPrice, labelWeight, labelStock;
-	private ComboBox<ProductCategory> comboBoxCategory;
-	private TextField                 textFieldName, textFieldDesc;
-	private FormItem                  formItem2, formItem3, formItem4, formItem5, formItem6, formItem7;
-	private Binder<Product>           binder;
+	private FormLayout         formLayout;
+	private Button             buttonCancel, buttonSave;
+	private BigDecimalField    bigDecimalPrice;
+	private Upload             upload;
+	private NumberField        numberFieldWeight;
+	private IntegerField       integerFieldStock;
+	private HorizontalLayout   horizontalLayout;
+	private Label              labelName, labelDesc, labelCategory, labelPrice, labelWeight, labelStock;
+	private ComboBox<Category> comboBoxCategory;
+	private TextField          textFieldName, textFieldDesc;
+	private FormItem           formItem2, formItem3, formItem4, formItem5, formItem6, formItem7;
+	private Binder<Product>    binder;
 	// </generated-code>
-
+	
 }

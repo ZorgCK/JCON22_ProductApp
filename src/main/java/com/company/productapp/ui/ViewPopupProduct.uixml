@@ -2,8 +2,8 @@
 <!DOCTYPE xml>
 <?xdevuiml version="1.0"?>
 <?template BROWSER_XGA?>
+<?import com.company.productapp.domain.Category?>
 <?import com.company.productapp.domain.Product?>
-<?import com.company.productapp.domain.ProductCategory?>
 <?import com.vaadin.flow.component.button.Button?>
 <?import com.vaadin.flow.component.combobox.ComboBox?>
 <?import com.vaadin.flow.component.formlayout.FormLayout?>
@@ -17,21 +17,18 @@
 <?import com.vaadin.flow.component.textfield.TextField?>
 <?import com.vaadin.flow.component.upload.Upload?>
 <?import com.vaadin.flow.data.binder.Binder?>
-<VerticalLayout xmlns:x="http://xml.xdev-software.com/xdevuiml" x:name="PopupViewProduct" padding="false">
+<VerticalLayout xmlns:x="http://xml.xdev-software.com/xdevuiml" x:name="ViewPopupProduct" padding="false">
     <x:constraints zpos="0" width="100%" height="100%" />
     <Binder x:name="binder">
         <x:typeArguments>
             <typeArgument type="Product" />
         </x:typeArguments>
         <x:bindings>
-            <binding field="textFieldImage" property="imageUrl" required="false" nullRepresentation="" readOnly="false">
-                <validator errorMessage="" type="Bean" />
-            </binding>
-            <binding field="textFieldName" property="name" required="true" nullRepresentation="" readOnly="false">
-                <validator minLength="5" errorMessage="Name must contain at least 5 characters" type="StringLength" />
+            <binding field="textFieldName" property="productName" required="true" nullRepresentation="" readOnly="false">
+                <validator minLength="5" errorMessage="Name must containt at least 5 characters" type="StringLength" />
             </binding>
             <binding field="textFieldDesc" property="description" required="true" nullRepresentation="" readOnly="false">
-                <validator minLength="12" errorMessage="Description must containt at least 12 characters" type="StringLength" />
+                <validator minLength="15" errorMessage="Description must containt at least 15 characters" type="StringLength" />
             </binding>
             <binding field="comboBoxCategory" property="category" required="true" readOnly="false">
                 <validator errorMessage="You need to choose a category for the product" type="Bean" />
@@ -57,10 +54,10 @@
         <FormItem x:name="formItem2">
             <x:constraints width="0px" height="0px" />
             <Label x:name="labelName" text="Name">
-                <x:constraints width="0px" label="true" height="0px" />
+                <x:constraints zpos="0" width="0px" label="true" height="0px" />
             </Label>
             <TextField required="true" x:name="textFieldName" requiredIndicatorVisible="true" preventInvalidInput="true">
-                <x:constraints width="100%" height="0px" />
+                <x:constraints zpos="0" width="100%" height="0px" />
             </TextField>
         </FormItem>
         <FormItem x:name="formItem3">
@@ -79,7 +76,7 @@
             </Label>
             <ComboBox required="true" x:name="comboBoxCategory" requiredIndicatorVisible="true" preventInvalidInput="true">
                 <x:typeArguments>
-                    <typeArgument type="ProductCategory" />
+                    <typeArgument type="Category" />
                 </x:typeArguments>
                 <x:constraints width="100%" height="0px" />
                 <x:itemLabel type="Property" data="name" />

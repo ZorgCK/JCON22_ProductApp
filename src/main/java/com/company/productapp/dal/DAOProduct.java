@@ -7,7 +7,7 @@ import com.company.productapp.domain.Product;
 import com.company.productapp.microstream.MicroStream;
 
 
-public class ProductDAO
+public class DAOProduct
 {
 	public static Collection<Product> findAll()
 	{
@@ -16,9 +16,9 @@ public class ProductDAO
 	
 	public static void insert(final Product product)
 	{
-		product.setUuid();
-		ProductDAO.findAll().add(product);
-		MicroStream.storageManager.store(ProductDAO.findAll());
+		product.setProductUuid();
+		MicroStream.root.getProducts().add(product);
+		MicroStream.storageManager.store(MicroStream.root.getProducts());
 	}
 	
 	public static void update(final Product product)
@@ -28,7 +28,7 @@ public class ProductDAO
 	
 	public static void delete(final Product product)
 	{
-		final Collection<Product> products = ProductDAO.findAll();
+		final Collection<Product> products = MicroStream.root.getProducts();
 		products.remove(product);
 		MicroStream.storageManager.store(products);
 	}

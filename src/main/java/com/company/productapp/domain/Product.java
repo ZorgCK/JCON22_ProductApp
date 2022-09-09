@@ -8,12 +8,12 @@ import java.util.UUID;
 
 public class Product implements Serializable
 {
-	private String          uuid;
-	private String          name, description;
-	private ProductCategory category;
-	private BigDecimal      unitPrice;
-	private double          unitWeight;
-	private int             unitsInStock;
+	private String     uuid;
+	private String     name, description;
+	private Category   category;
+	private BigDecimal unitPrice;
+	private double     unitWeight;
+	private int        unitsInStock;
 
 	private String imageName;
 	
@@ -27,12 +27,12 @@ public class Product implements Serializable
 	public Product(
 		final String name,
 		final String desc,
-		final ProductCategory category,
+		final Category category,
 		final BigDecimal price,
 		final double weight,
 		final int stock)
 	{
-		this.setName(name);
+		this.setProductName(name);
 		this.setDescription(desc);
 		this.setCategory(category);
 		this.setUnitPrice(price);
@@ -40,22 +40,22 @@ public class Product implements Serializable
 		this.setUnitsInStock(stock);
 	}
 
-	public void setUuid()
+	public void setProductUuid()
 	{
 		this.uuid = UUID.randomUUID().toString();
 	}
 
-	public String getUuid()
+	public String getProductUuid()
 	{
 		return this.uuid;
 	}
 
-	public String getName()
+	public String getProductName()
 	{
 		return this.name;
 	}
 
-	public void setName(final String name)
+	public void setProductName(final String name)
 	{
 		this.name = name;
 	}
@@ -70,12 +70,12 @@ public class Product implements Serializable
 		this.description = description;
 	}
 
-	public ProductCategory getCategory()
+	public Category getCategory()
 	{
 		return this.category;
 	}
 
-	public void setCategory(final ProductCategory category)
+	public void setCategory(final Category category)
 	{
 		this.category = category;
 	}

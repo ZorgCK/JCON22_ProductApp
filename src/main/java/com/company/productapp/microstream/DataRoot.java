@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.company.productapp.domain.Product;
-import com.company.productapp.domain.ProductCategory;
+import com.company.productapp.domain.Category;
 
 
 /**
@@ -16,7 +16,7 @@ import com.company.productapp.domain.ProductCategory;
 public class DataRoot
 {
 	private Set<Product>         products = new HashSet<>();
-	private Set<ProductCategory> category = new HashSet<>();
+	private Set<Category> category = new HashSet<>();
 
 	public Set<Product> getProducts()
 	{
@@ -28,12 +28,12 @@ public class DataRoot
 		this.products = products;
 	}
 
-	public Set<ProductCategory> getCategory()
+	public Set<Category> getCategory()
 	{
 		return this.category;
 	}
 
-	public void setCategory(final Set<ProductCategory> category)
+	public void setCategory(final Set<Category> category)
 	{
 		this.category = category;
 	}

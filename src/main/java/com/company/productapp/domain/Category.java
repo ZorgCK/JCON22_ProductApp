@@ -5,35 +5,40 @@ import java.io.Serializable;
 import java.util.UUID;
 
 
-public class ProductCategory implements Serializable
+public class Category implements Serializable
 {
-
+	
 	private String uuid;
 	private String categoryName;
-
-	public ProductCategory(final String name)
+	
+	public Category()
 	{
-		this.setName(name);
+
 	}
 
-	public String getUuid()
+	public Category(final String name)
+	{
+		this.setCategoryName(name);
+	}
+	
+	public String getCategoryUuid()
 	{
 		return this.uuid;
 	}
-
-	public void setUuid()
+	
+	public void setCategoryUuid()
 	{
 		this.uuid = UUID.randomUUID().toString();
 	}
-
-	public String getName()
+	
+	public String getCategoryName()
 	{
 		return this.categoryName;
 	}
-
-	public void setName(final String name)
+	
+	public void setCategoryName(final String name)
 	{
 		this.categoryName = name;
 	}
-
+	
 }
