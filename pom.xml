@@ -29,6 +29,10 @@
 			</snapshots>
 		</repository>
 		<repository>
+			<id>msee</id>
+			<url>https://repo.microstream.one/repository/ms-ee/</url>
+		</repository>
+		<repository>
 			<id>sonatype-nexus-snapshots</id>
 			<name>Sonatype Nexus Snapshots</name>
 			<url>
@@ -60,6 +64,11 @@
 				microstream-storage-embedded-configuration
 			</artifactId>
 			<version>07.01.00-MS-beta2</version>
+		</dependency>
+		<dependency>
+			<groupId>one.microstream</groupId>
+			<artifactId>microstream-enterprise-afs-aws-s3</artifactId>
+			<version>07.00.00-MS-GA</version>
 		</dependency>
 	</dependencies>
 
