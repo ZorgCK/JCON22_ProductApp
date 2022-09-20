@@ -155,8 +155,11 @@
 								<phase>run</phase>
 								<configuration>
 									<target>
-										<exec executable="start" vmlauncher="false">
-											<arg line="http://localhost:8080/"></arg>
+										<exec executable="start"
+											vmlauncher="false">
+											<arg
+												line="http://localhost:8080/">
+											</arg>
 										</exec>
 									</target>
 								</configuration>

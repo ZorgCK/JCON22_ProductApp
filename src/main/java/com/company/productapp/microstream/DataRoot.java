@@ -15,24 +15,24 @@ import com.company.productapp.domain.Category;
  */
 public class DataRoot
 {
-	private Set<Product>         products = new HashSet<>();
-	private Set<Category> category = new HashSet<>();
-
+	private Set<Product>	products	= new HashSet<>();
+	private Set<Category>	category	= new HashSet<>();
+	
 	public Set<Product> getProducts()
 	{
 		return this.products;
 	}
-
+	
 	public void setProducts(final Set<Product> products)
 	{
 		this.products = products;
 	}
-
+	
 	public Set<Category> getCategory()
 	{
 		return this.category;
 	}
-
+	
 	public void setCategory(final Set<Category> category)
 	{
 		this.category = category;

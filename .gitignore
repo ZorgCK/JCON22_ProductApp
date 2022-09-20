@@ -5,3 +5,4 @@ pnpmfile.js
 webpack.generated.js
 /.apt_generated_tests/
 /.apt_generated/
+/.settings/

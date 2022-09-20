@@ -47,8 +47,7 @@ public class GenColProductFunctions extends HorizontalLayout implements Rendered
 	private void buttonEdit_onClick(final ClickEvent<Button> event)
 	{
 		final ViewProducts parent = UIUtils.getNextParent(this, ViewProducts.class);
-		final Dialog   dialog = new Dialog();
-		dialog.add(new ViewPopupProduct(this.value, () -> {
+		final Dialog   dialog = new Dialog(new ViewPopupProduct(this.value, () -> {
 			parent.refreshGrid();
 		}));
 
